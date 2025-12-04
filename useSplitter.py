@@ -1,35 +1,16 @@
-class RecursiveCharacterTextSplitter:
-    """
-    递归字符分割器类
-    """
-    def __init__(
-            self,
-            chunk_size:int = 100, # 默认分块大小
-            chunk_overlap:int = 0, # 默认块间重叠为0
-            separators: list[str] | None = None # 分割符列表
-    ):
-        # 赋值分块大小
-        self.chunk_size = chunk_size
-        # 赋值分块重叠长度
-        self.chunk_overlap = chunk_overlap
-        # 如果未传入分隔符，则使用默认分隔符列表
-        self.separators = separators or ["\n\n","\n"," ", ""]
-    def _split_text(self,text:str, separators: list[str]) -> list[str]:
-        # 初始化选择的分隔符为最后一个
-        chosen_separator = separators[-1]
-        for i,sep in enumerate(separators):
-            # 如果分隔符为空，直接选中并跳出
-            if not sep:
-                chosen_separator = sep
-                break
-            if sep in text:
-                chosen_separator = sep
-                break
-        if chosen_separator:
-            text_pieces = text.split(chosen_separator)
-        else:
-            text_pieces = list(text)
-        return text_pieces
+# 导入RecursiveCharacterTextSplitter类用于文本分割
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+# from splitter import RecursiveCharacterTextSplitter  # 可以选用自定义的splitters模块
 
-    def split_txt(self, text: str) -> list[str]:
-        return self._split_text(text,self.separators)
+# 创建一个文本分割器对象，设置分块大小为4，分块重叠为0
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=4,chunk_overlap=0)
+
+# 定义一个包含三个段落的文档字符串
+document = f"""段落1\n段落2\n\n段落3\n段落4"""
+
+# 使用分割器对文档内容进行分割，返回分块列表
+texts = text_splitter.split_text(document)
+
+# 遍历每个分块，输出分块编号、长度和内容
+for i, text in enumerate(texts):
+    print(f"分块 {i+1}: 长度={len(text)} 内容: {repr(text)}")
